@@ -98,17 +98,34 @@
                     </div>
                     <div>
                         <h1 class="text-3xl font-bold bg-gradient-to-r from-white to-orange-100 bg-clip-text text-transparent">TravelIndia</h1>
-                        <p class="text-sm opacity-90 font-medium">🌟 Discover Incredible India</p>
+                        <p class="text-sm opacity-90 font-medium">🌟 Tourism Management System</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="text-center">
-                        <p class="text-sm opacity-90">Total Bookings</p>
-                        <p class="text-xl font-bold" id="totalBookings">0</p>
+                    <div id="userInfo" class="text-center hidden">
+                        <p class="text-sm opacity-90">Welcome</p>
+                        <p class="text-lg font-bold" id="userName">User</p>
                     </div>
-                    <button onclick="resetData()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all">
-                        Reset Data
-                    </button>
+                    <div id="authButtons" class="flex space-x-2">
+                        <button onclick="showLoginModal()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all">
+                            👤 Login
+                        </button>
+                        <button onclick="showRegisterModal()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all">
+                            📝 Register
+                        </button>
+                    </div>
+                    <div id="userActions" class="flex space-x-2 hidden">
+                        <div class="text-center">
+                            <p class="text-sm opacity-90">Total Bookings</p>
+                            <p class="text-xl font-bold" id="totalBookings">0</p>
+                        </div>
+                        <button id="adminBtn" onclick="showTab('admin')" class="bg-yellow-500 bg-opacity-80 hover:bg-opacity-100 px-4 py-2 rounded-lg transition-all hidden">
+                            ⚙️ Admin
+                        </button>
+                        <button onclick="logout()" class="bg-red-500 bg-opacity-80 hover:bg-opacity-100 px-4 py-2 rounded-lg transition-all">
+                            🚪 Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -170,8 +187,17 @@
                 <button onclick="showTab('packages')" id="tab-packages" class="px-6 py-3 rounded-md font-medium text-gray-600 hover:text-gray-800 transition-all">
                     📦 Packages
                 </button>
+                <button onclick="showTab('reviews')" id="tab-reviews" class="px-6 py-3 rounded-md font-medium text-gray-600 hover:text-gray-800 transition-all">
+                    ⭐ Reviews
+                </button>
                 <button onclick="showTab('bookings')" id="tab-bookings" class="px-6 py-3 rounded-md font-medium text-gray-600 hover:text-gray-800 transition-all">
                     📋 My Bookings
+                </button>
+                <button onclick="showTab('reports')" id="tab-reports" class="px-6 py-3 rounded-md font-medium text-gray-600 hover:text-gray-800 transition-all">
+                    📊 Reports
+                </button>
+                <button onclick="showTab('admin')" id="tab-admin" class="px-6 py-3 rounded-md font-medium text-gray-600 hover:text-gray-800 transition-all hidden">
+                    ⚙️ Admin Panel
                 </button>
             </div>
         </div>
@@ -206,6 +232,19 @@
             </div>
         </div>
 
+        <!-- Reviews Tab -->
+        <div id="content-reviews" class="tab-content hidden">
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">⭐ Reviews & Ratings</h3>
+                <button onclick="showAddReviewModal()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                    ✍️ Write Review
+                </button>
+            </div>
+            <div id="reviewsContainer">
+                <!-- Reviews will be loaded here -->
+            </div>
+        </div>
+
         <!-- Bookings Tab -->
         <div id="content-bookings" class="tab-content hidden">
             <div class="mb-6">
@@ -215,7 +254,167 @@
                 <!-- Bookings will be loaded here -->
             </div>
         </div>
+
+        <!-- Reports Tab -->
+        <div id="content-reports" class="tab-content hidden">
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">📊 Tourism Reports</h3>
+            </div>
+            <div id="reportsContainer">
+                <!-- Reports will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Admin Panel Tab -->
+        <div id="content-admin" class="tab-content hidden">
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">⚙️ Admin Panel</h3>
+                <div class="flex space-x-4 mb-6">
+                    <button onclick="showAdminSection('destinations')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                        🏖️ Manage Destinations
+                    </button>
+                    <button onclick="showAdminSection('hotels')" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                        🏨 Manage Hotels
+                    </button>
+                    <button onclick="showAdminSection('users')" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+                        👥 Manage Users
+                    </button>
+                    <button onclick="resetData()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                        🗑️ Reset Data
+                    </button>
+                </div>
+            </div>
+            <div id="adminContainer">
+                <!-- Admin content will be loaded here -->
+            </div>
+        </div>
     </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-semibold text-gray-800">👤 Login</h3>
+                    <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+                </div>
+                
+                <form id="loginForm" onsubmit="login(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" id="loginEmail" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password *</label>
+                        <input type="password" id="loginPassword" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeModal('loginModal')" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="flex-1 gradient-bg text-white py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
+                            🔑 Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-semibold text-gray-800">📝 Register</h3>
+                    <button onclick="closeModal('registerModal')" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+                </div>
+                
+                <form id="registerForm" onsubmit="register(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                        <input type="text" id="registerName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" id="registerEmail" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <input type="tel" id="registerPhone" placeholder="+91 XXXXX XXXXX" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                        <input type="text" id="registerCity" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password *</label>
+                        <input type="password" id="registerPassword" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeModal('registerModal')" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="flex-1 gradient-bg text-white py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
+                            ✅ Register
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Review Modal -->
+    <div id="addReviewModal" class="modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-semibold text-gray-800">✍️ Write Review</h3>
+                    <button onclick="closeModal('addReviewModal')" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+                </div>
+                
+                <form id="reviewForm" onsubmit="submitReview(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Review For *</label>
+                        <select id="reviewType" required onchange="loadReviewOptions()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                            <option value="">Select Type</option>
+                            <option value="destination">Destination</option>
+                            <option value="hotel">Hotel</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Item *</label>
+                        <select id="reviewItem" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                            <option value="">Select Item</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Rating *</label>
+                        <select id="reviewRating" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                            <option value="">Select Rating</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ Good</option>
+                            <option value="3">⭐⭐⭐ Average</option>
+                            <option value="2">⭐⭐ Poor</option>
+                            <option value="1">⭐ Terrible</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Comment</label>
+                        <textarea id="reviewComment" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500" placeholder="Share your experience..."></textarea>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeModal('addReviewModal')" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="flex-1 gradient-bg text-white py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
+                            📝 Submit Review
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Booking Modal -->
     <div id="bookingModal" class="modal">
@@ -223,7 +422,7 @@
             <div class="p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-2xl font-semibold text-gray-800">🎯 Complete Your Booking</h3>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+                    <button onclick="closeModal('bookingModal')" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
                 </div>
                 
                 <form id="bookingForm" onsubmit="submitBooking(event)">
@@ -284,7 +483,7 @@
                     </div>
 
                     <div class="flex space-x-3">
-                        <button type="button" onclick="closeModal()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        <button type="button" onclick="closeModal('bookingModal')" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                             Cancel
                         </button>
                         <button type="submit" class="flex-1 gradient-bg text-white py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
@@ -298,25 +497,108 @@
 
     <!-- JavaScript Code -->
     <script>
-        // ===== DATA SECTION =====
+        // ===== DATABASE SCHEMA SIMULATION =====
+        /*
+        DATABASE SCHEMA (MySQL):
+        
+        CREATE TABLE user (
+            user_id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            phone VARCHAR(15),
+            city VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE destination (
+            dest_id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            location VARCHAR(100) NOT NULL,
+            category ENUM('beach', 'heritage', 'nature', 'hills', 'city', 'adventure') NOT NULL,
+            description TEXT,
+            image_url VARCHAR(255),
+            price_per_person DECIMAL(10,2),
+            state VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE hotel (
+            hotel_id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            dest_id INT,
+            price_range DECIMAL(10,2) NOT NULL,
+            rating DECIMAL(2,1) CHECK (rating >= 1 AND rating <= 5),
+            address TEXT,
+            amenities JSON,
+            stars INT CHECK (stars >= 1 AND stars <= 5),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (dest_id) REFERENCES destination(dest_id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE booking (
+            book_id INT PRIMARY KEY AUTO_INCREMENT,
+            user_id INT NOT NULL,
+            hotel_id INT,
+            dest_id INT,
+            checkin_date DATE,
+            checkout_date DATE,
+            travelers INT NOT NULL DEFAULT 1,
+            total_amount DECIMAL(10,2) NOT NULL,
+            booking_status ENUM('confirmed', 'cancelled', 'completed') DEFAULT 'confirmed',
+            booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+            FOREIGN KEY (hotel_id) REFERENCES hotel(hotel_id) ON DELETE SET NULL,
+            FOREIGN KEY (dest_id) REFERENCES destination(dest_id) ON DELETE SET NULL
+        );
+
+        CREATE TABLE review (
+            review_id INT PRIMARY KEY AUTO_INCREMENT,
+            user_id INT NOT NULL,
+            dest_id INT,
+            hotel_id INT,
+            rating INT CHECK (rating >= 1 AND rating <= 5),
+            comment TEXT,
+            review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+            FOREIGN KEY (dest_id) REFERENCES destination(dest_id) ON DELETE CASCADE,
+            FOREIGN KEY (hotel_id) REFERENCES hotel(hotel_id) ON DELETE CASCADE
+        );
+        */
+
+        // ===== SIMULATED DATABASE DATA =====
+        let users = JSON.parse(localStorage.getItem('travelindia_users') || '[]');
+        let currentUser = JSON.parse(localStorage.getItem('travelindia_currentUser') || 'null');
+        let isAdmin = JSON.parse(localStorage.getItem('travelindia_isAdmin') || 'false');
+
+        // Sample destinations (simulating destination table)
         const destinations = [
-            { id: 1, name: 'Goa', price: 15000, rating: 4.5, image: '🏖️', description: 'Beautiful beaches, vibrant nightlife, and Portuguese heritage', category: 'beach', state: 'Goa' },
-            { id: 2, name: 'Kerala Backwaters', price: 20000, rating: 4.7, image: '🛶', description: 'Serene backwaters, houseboats, and lush greenery', category: 'nature', state: 'Kerala' },
-            { id: 3, name: 'Rajasthan Royal Tour', price: 35000, rating: 4.6, image: '🏰', description: 'Majestic palaces, desert safaris, and rich culture', category: 'heritage', state: 'Rajasthan' },
-            { id: 4, name: 'Himachal Hill Stations', price: 18000, rating: 4.4, image: '🏔️', description: 'Snow-capped mountains, adventure sports, and cool climate', category: 'hills', state: 'Himachal Pradesh' },
-            { id: 5, name: 'Kashmir Paradise', price: 25000, rating: 4.8, image: '🌸', description: 'Dal Lake, Shikara rides, and breathtaking valleys', category: 'nature', state: 'Kashmir' },
-            { id: 6, name: 'Mumbai City Break', price: 12000, rating: 4.2, image: '🏙️', description: 'Bollywood, street food, and bustling city life', category: 'city', state: 'Maharashtra' }
+            { dest_id: 1, name: 'Goa Beaches', location: 'Goa', category: 'beach', description: 'Beautiful beaches, vibrant nightlife, and Portuguese heritage', image_url: '🏖️', price_per_person: 15000, state: 'Goa' },
+            { dest_id: 2, name: 'Kerala Backwaters', location: 'Alleppey, Kerala', category: 'nature', description: 'Serene backwaters, houseboats, and lush greenery', image_url: '🛶', price_per_person: 20000, state: 'Kerala' },
+            { dest_id: 3, name: 'Rajasthan Palaces', location: 'Jaipur, Rajasthan', category: 'heritage', description: 'Majestic palaces, desert safaris, and rich culture', image_url: '🏰', price_per_person: 35000, state: 'Rajasthan' },
+            { dest_id: 4, name: 'Himachal Hills', location: 'Manali, Himachal Pradesh', category: 'hills', description: 'Snow-capped mountains, adventure sports, and cool climate', image_url: '🏔️', price_per_person: 18000, state: 'Himachal Pradesh' },
+            { dest_id: 5, name: 'Kashmir Valley', location: 'Srinagar, Kashmir', category: 'nature', description: 'Dal Lake, Shikara rides, and breathtaking valleys', image_url: '🌸', price_per_person: 25000, state: 'Kashmir' },
+            { dest_id: 6, name: 'Mumbai Metropolitan', location: 'Mumbai, Maharashtra', category: 'city', description: 'Bollywood, street food, and bustling city life', image_url: '🏙️', price_per_person: 12000, state: 'Maharashtra' }
         ];
 
+        // Sample hotels (simulating hotel table with foreign keys)
         const hotels = [
-            { id: 1, name: 'Taj Goa Resort', location: 'Goa', price: 8000, rating: 4.8, amenities: ['Pool', 'Spa', 'Beach Access', 'Restaurant'], stars: 5 },
-            { id: 2, name: 'Kerala Houseboat', location: 'Kerala', price: 5000, rating: 4.6, amenities: ['AC', 'Meals', 'Scenic Views', 'Traditional'], stars: 4 },
-            { id: 3, name: 'Rajasthan Palace Hotel', location: 'Rajasthan', price: 12000, rating: 4.7, amenities: ['Heritage', 'Pool', 'Cultural Shows', 'Luxury'], stars: 5 },
-            { id: 4, name: 'Himachal Resort', location: 'Himachal', price: 6000, rating: 4.3, amenities: ['Mountain View', 'Bonfire', 'Adventure Sports', 'Cozy'], stars: 4 },
-            { id: 5, name: 'Kashmir Deluxe Hotel', location: 'Kashmir', price: 7000, rating: 4.5, amenities: ['Lake View', 'Garden', 'Local Cuisine', 'Comfort'], stars: 4 },
-            { id: 6, name: 'Mumbai Business Hotel', location: 'Mumbai', price: 4000, rating: 4.1, amenities: ['WiFi', 'Business Center', 'City View', 'Modern'], stars: 3 }
+            { hotel_id: 1, name: 'Taj Goa Resort', dest_id: 1, price_range: 8000, rating: 4.8, address: 'Calangute Beach, Goa', amenities: ['Pool', 'Spa', 'Beach Access', 'Restaurant'], stars: 5 },
+            { hotel_id: 2, name: 'Kerala Houseboat', dest_id: 2, price_range: 5000, rating: 4.6, address: 'Alleppey Backwaters, Kerala', amenities: ['AC', 'Meals', 'Scenic Views', 'Traditional'], stars: 4 },
+            { hotel_id: 3, name: 'Rajasthan Palace Hotel', dest_id: 3, price_range: 12000, rating: 4.7, address: 'City Palace Road, Jaipur', amenities: ['Heritage', 'Pool', 'Cultural Shows', 'Luxury'], stars: 5 },
+            { hotel_id: 4, name: 'Himachal Resort', dest_id: 4, price_range: 6000, rating: 4.3, address: 'Mall Road, Manali', amenities: ['Mountain View', 'Bonfire', 'Adventure Sports', 'Cozy'], stars: 4 },
+            { hotel_id: 5, name: 'Kashmir Deluxe Hotel', dest_id: 5, price_range: 7000, rating: 4.5, address: 'Dal Lake, Srinagar', amenities: ['Lake View', 'Garden', 'Local Cuisine', 'Comfort'], stars: 4 },
+            { hotel_id: 6, name: 'Mumbai Business Hotel', dest_id: 6, price_range: 4000, rating: 4.1, address: 'Bandra West, Mumbai', amenities: ['WiFi', 'Business Center', 'City View', 'Modern'], stars: 3 }
         ];
 
+        // Sample reviews (simulating review table)
+        let reviews = JSON.parse(localStorage.getItem('travelindia_reviews') || JSON.stringify([
+            { review_id: 1, user_id: 1, dest_id: 1, hotel_id: null, rating: 5, comment: 'Amazing beaches and great hospitality!', review_date: '2024-01-15' },
+            { review_id: 2, user_id: 2, dest_id: 2, hotel_id: 2, rating: 4, comment: 'Peaceful backwaters, loved the houseboat experience.', review_date: '2024-01-20' },
+            { review_id: 3, user_id: 1, dest_id: 3, hotel_id: null, rating: 5, comment: 'Royal treatment and beautiful architecture!', review_date: '2024-02-01' }
+        ]));
+
+        // Legacy packages for backward compatibility
         const packages = [
             { id: 1, name: 'Golden Triangle', destinations: ['Delhi', 'Agra', 'Jaipur'], duration: 6, price: 28000, description: 'Classic India tour covering Delhi, Agra (Taj Mahal), and Jaipur', includes: ['Hotels', 'Transport', 'Guide', 'Breakfast'] },
             { id: 2, name: 'South India Explorer', destinations: ['Bangalore', 'Mysore', 'Ooty'], duration: 8, price: 32000, description: 'Explore the cultural richness of South India', includes: ['Hotels', 'Transport', 'Meals', 'Sightseeing'] },
@@ -340,12 +622,33 @@
         });
 
         function initializeApp() {
+            checkAuthStatus();
             loadDestinations();
             loadHotels();
             loadPackages();
             loadBookings();
+            loadReviews();
             updateBookingCount();
             setDefaultDates();
+            initializeAdminUser();
+        }
+
+        function initializeAdminUser() {
+            // Create default admin user if none exists
+            if (users.length === 0) {
+                const adminUser = {
+                    user_id: 1,
+                    name: 'Admin User',
+                    email: 'admin@travelindia.com',
+                    password: 'admin123',
+                    phone: '+91 98765 43210',
+                    city: 'Mumbai',
+                    created_at: new Date().toISOString(),
+                    is_admin: true
+                };
+                users.push(adminUser);
+                localStorage.setItem('travelindia_users', JSON.stringify(users));
+            }
         }
 
         function setDefaultDates() {
@@ -354,6 +657,115 @@
             const dateString = tomorrow.toISOString().split('T')[0];
             document.getElementById('searchDate').value = dateString;
             document.getElementById('travelDate').value = dateString;
+        }
+
+        function checkAuthStatus() {
+            if (currentUser) {
+                showUserInterface();
+                if (currentUser.is_admin || isAdmin) {
+                    showAdminInterface();
+                }
+            } else {
+                showGuestInterface();
+            }
+        }
+
+        function showUserInterface() {
+            document.getElementById('authButtons').classList.add('hidden');
+            document.getElementById('userActions').classList.remove('hidden');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentUser.name;
+        }
+
+        function showAdminInterface() {
+            document.getElementById('adminBtn').classList.remove('hidden');
+            document.getElementById('tab-admin').classList.remove('hidden');
+        }
+
+        function showGuestInterface() {
+            document.getElementById('authButtons').classList.remove('hidden');
+            document.getElementById('userActions').classList.add('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('adminBtn').classList.add('hidden');
+            document.getElementById('tab-admin').classList.add('hidden');
+        }
+
+        // ===== AUTHENTICATION FUNCTIONS =====
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function showRegisterModal() {
+            document.getElementById('registerModal').classList.add('show');
+        }
+
+        function login(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                isAdmin = user.is_admin || false;
+                localStorage.setItem('travelindia_currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('travelindia_isAdmin', JSON.stringify(isAdmin));
+                
+                closeModal('loginModal');
+                showUserInterface();
+                if (isAdmin) showAdminInterface();
+                
+                showNotification(`🎉 Welcome back, ${user.name}!`, 'success');
+                loadBookings(); // Refresh bookings for the user
+            } else {
+                showNotification('❌ Invalid email or password!', 'error');
+            }
+        }
+
+        function register(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const city = document.getElementById('registerCity').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            // Check if user already exists
+            if (users.find(u => u.email === email)) {
+                showNotification('❌ User with this email already exists!', 'error');
+                return;
+            }
+            
+            const newUser = {
+                user_id: users.length + 1,
+                name,
+                email,
+                password,
+                phone,
+                city,
+                created_at: new Date().toISOString(),
+                is_admin: false
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('travelindia_users', JSON.stringify(users));
+            
+            closeModal('registerModal');
+            showNotification(`✅ Registration successful! Please login with your credentials.`, 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            isAdmin = false;
+            localStorage.removeItem('travelindia_currentUser');
+            localStorage.removeItem('travelindia_isAdmin');
+            
+            showGuestInterface();
+            showTab('destinations');
+            showNotification('👋 Logged out successfully!', 'info');
         }
 
         // ===== TAB AND SEARCH FUNCTIONS =====
@@ -385,7 +797,222 @@
         function loadTabSpecificData(tabName) {
             if (tabName === 'bookings') {
                 loadBookings();
+            } else if (tabName === 'reviews') {
+                loadReviews();
+            } else if (tabName === 'reports') {
+                loadReports();
+            } else if (tabName === 'admin') {
+                loadAdminPanel();
             }
+        }
+
+        // ===== REVIEWS FUNCTIONS =====
+        function loadReviews() {
+            const container = document.getElementById('reviewsContainer');
+            
+            if (reviews.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+                        <span class="text-6xl mb-4 block">⭐</span>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">No Reviews Yet</h3>
+                        <p class="text-gray-600">Be the first to share your experience!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="space-y-4">
+                    ${reviews.map(review => {
+                        const destination = destinations.find(d => d.dest_id === review.dest_id);
+                        const hotel = hotels.find(h => h.hotel_id === review.hotel_id);
+                        const user = users.find(u => u.user_id === review.user_id);
+                        const itemName = destination ? destination.name : (hotel ? hotel.name : 'Unknown');
+                        const itemType = destination ? 'Destination' : 'Hotel';
+                        
+                        return `
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800">${itemName}</h3>
+                                        <p class="text-sm text-gray-600">${itemType} Review</p>
+                                        <div class="flex items-center mt-2">
+                                            <span class="text-yellow-400">${'⭐'.repeat(review.rating)}</span>
+                                            <span class="ml-2 text-sm text-gray-600">${review.rating}/5</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-gray-500">By: ${user ? user.name : 'Anonymous'}</p>
+                                        <p class="text-xs text-gray-400">${new Date(review.review_date).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                                ${review.comment ? `<p class="text-gray-700 italic">"${review.comment}"</p>` : ''}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function showAddReviewModal() {
+            if (!currentUser) {
+                showNotification('❌ Please login to write a review!', 'error');
+                return;
+            }
+            document.getElementById('addReviewModal').classList.add('show');
+        }
+
+        function loadReviewOptions() {
+            const type = document.getElementById('reviewType').value;
+            const itemSelect = document.getElementById('reviewItem');
+            
+            itemSelect.innerHTML = '<option value="">Select Item</option>';
+            
+            if (type === 'destination') {
+                destinations.forEach(dest => {
+                    itemSelect.innerHTML += `<option value="dest_${dest.dest_id}">${dest.name}</option>`;
+                });
+            } else if (type === 'hotel') {
+                hotels.forEach(hotel => {
+                    itemSelect.innerHTML += `<option value="hotel_${hotel.hotel_id}">${hotel.name}</option>`;
+                });
+            }
+        }
+
+        function submitReview(event) {
+            event.preventDefault();
+            
+            if (!currentUser) {
+                showNotification('❌ Please login to submit a review!', 'error');
+                return;
+            }
+            
+            const type = document.getElementById('reviewType').value;
+            const item = document.getElementById('reviewItem').value;
+            const rating = parseInt(document.getElementById('reviewRating').value);
+            const comment = document.getElementById('reviewComment').value;
+            
+            const [itemType, itemId] = item.split('_');
+            
+            const newReview = {
+                review_id: reviews.length + 1,
+                user_id: currentUser.user_id,
+                dest_id: itemType === 'dest' ? parseInt(itemId) : null,
+                hotel_id: itemType === 'hotel' ? parseInt(itemId) : null,
+                rating,
+                comment,
+                review_date: new Date().toISOString()
+            };
+            
+            reviews.push(newReview);
+            localStorage.setItem('travelindia_reviews', JSON.stringify(reviews));
+            
+            closeModal('addReviewModal');
+            loadReviews();
+            showNotification('✅ Review submitted successfully!', 'success');
+        }
+
+        // ===== REPORTS FUNCTIONS =====
+        function loadReports() {
+            const container = document.getElementById('reportsContainer');
+            
+            // Calculate statistics
+            const totalDestinations = destinations.length;
+            const totalHotels = hotels.length;
+            const totalBookings = bookings.length;
+            const totalUsers = users.length;
+            const totalReviews = reviews.length;
+            
+            // Tourists per destination
+            const destinationStats = destinations.map(dest => {
+                const destBookings = bookings.filter(b => b.dest_id === dest.dest_id || 
+                    hotels.find(h => h.hotel_id === b.hotel_id && h.dest_id === dest.dest_id));
+                const totalTourists = destBookings.reduce((sum, booking) => sum + (booking.travelers || 0), 0);
+                return { name: dest.name, tourists: totalTourists, bookings: destBookings.length };
+            });
+            
+            // Top rated destinations
+            const destinationRatings = destinations.map(dest => {
+                const destReviews = reviews.filter(r => r.dest_id === dest.dest_id);
+                const avgRating = destReviews.length > 0 ? 
+                    destReviews.reduce((sum, r) => sum + r.rating, 0) / destReviews.length : 0;
+                return { name: dest.name, rating: avgRating.toFixed(1), reviewCount: destReviews.length };
+            }).sort((a, b) => b.rating - a.rating);
+            
+            // Bookings per hotel
+            const hotelStats = hotels.map(hotel => {
+                const hotelBookings = bookings.filter(b => b.hotel_id === hotel.hotel_id);
+                const totalTourists = hotelBookings.reduce((sum, booking) => sum + (booking.travelers || 0), 0);
+                return { name: hotel.name, bookings: hotelBookings.length, tourists: totalTourists };
+            }).sort((a, b) => b.bookings - a.bookings);
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-blue-600">${totalDestinations}</div>
+                        <div class="text-sm text-blue-800">Total Destinations</div>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-green-600">${totalHotels}</div>
+                        <div class="text-sm text-green-800">Total Hotels</div>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-orange-600">${totalBookings}</div>
+                        <div class="text-sm text-orange-800">Total Bookings</div>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-purple-600">${totalUsers}</div>
+                        <div class="text-sm text-purple-800">Total Users</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">🏖️ Tourists per Destination</h4>
+                        <div class="space-y-3">
+                            ${destinationStats.map(stat => `
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">${stat.name}</span>
+                                    <div class="text-right">
+                                        <div class="text-sm font-semibold text-gray-800">${stat.tourists} tourists</div>
+                                        <div class="text-xs text-gray-500">${stat.bookings} bookings</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">⭐ Top Rated Destinations</h4>
+                        <div class="space-y-3">
+                            ${destinationRatings.slice(0, 6).map(dest => `
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">${dest.name}</span>
+                                    <div class="text-right">
+                                        <div class="text-sm font-semibold text-gray-800">${dest.rating}/5 ⭐</div>
+                                        <div class="text-xs text-gray-500">${dest.reviewCount} reviews</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">🏨 Bookings per Hotel</h4>
+                        <div class="space-y-3">
+                            ${hotelStats.slice(0, 6).map(hotel => `
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">${hotel.name}</span>
+                                    <div class="text-right">
+                                        <div class="text-sm font-semibold text-gray-800">${hotel.bookings} bookings</div>
+                                        <div class="text-xs text-gray-500">${hotel.tourists} tourists</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function searchTrips() {
@@ -472,29 +1099,36 @@
         }
 
         function createDestinationCard(dest) {
+            // Calculate average rating from reviews
+            const destReviews = reviews.filter(r => r.dest_id === dest.dest_id);
+            const avgRating = destReviews.length > 0 ? 
+                (destReviews.reduce((sum, r) => sum + r.rating, 0) / destReviews.length).toFixed(1) : 'New';
+            
             return `
                 <div class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
                     <div class="h-48 bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
-                        <span class="text-6xl">${dest.image}</span>
+                        <span class="text-6xl">${dest.image_url}</span>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-xl font-semibold text-gray-800">${dest.name}</h3>
                             <div class="flex items-center">
                                 <span class="text-yellow-400">⭐</span>
-                                <span class="text-sm text-gray-600 ml-1">${dest.rating}</span>
+                                <span class="text-sm text-gray-600 ml-1">${avgRating}</span>
+                                <span class="text-xs text-gray-500 ml-1">(${destReviews.length})</span>
                             </div>
                         </div>
+                        <p class="text-gray-600 mb-2 text-sm">📍 ${dest.location}</p>
                         <p class="text-gray-600 mb-4 text-sm">${dest.description}</p>
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-orange-600">₹${dest.price.toLocaleString()}</span>
+                            <span class="text-2xl font-bold text-orange-600">₹${dest.price_per_person.toLocaleString()}</span>
                             <span class="text-sm text-gray-500">per person</span>
                         </div>
                         <div class="flex flex-wrap gap-2 mb-4">
                             <span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs rounded-full capitalize">${dest.category}</span>
                             <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${dest.state}</span>
                         </div>
-                        <button onclick="bookDestination(${dest.id})" class="w-full gradient-bg text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">
+                        <button onclick="bookDestination(${dest.dest_id})" class="w-full gradient-bg text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">
                             🎯 Book Now
                         </button>
                     </div>
@@ -655,7 +1289,13 @@
 
         // ===== BOOKING FUNCTIONS =====
         function bookDestination(destinationId) {
-            const destination = destinations.find(d => d.id === destinationId);
+            if (!currentUser) {
+                showNotification('❌ Please login to make a booking!', 'error');
+                showLoginModal();
+                return;
+            }
+            
+            const destination = destinations.find(d => d.dest_id === destinationId);
             if (!destination) {
                 showNotification('❌ Destination not found!', 'error');
                 return;
@@ -666,7 +1306,13 @@
         }
 
         function bookHotel(hotelId) {
-            const hotel = hotels.find(h => h.id === hotelId);
+            if (!currentUser) {
+                showNotification('❌ Please login to make a booking!', 'error');
+                showLoginModal();
+                return;
+            }
+            
+            const hotel = hotels.find(h => h.hotel_id === hotelId);
             if (!hotel) {
                 showNotification('❌ Hotel not found!', 'error');
                 return;
@@ -698,30 +1344,45 @@
         }
 
         function createDestinationBookingDetails(destination) {
+            const destReviews = reviews.filter(r => r.dest_id === destination.dest_id);
+            const avgRating = destReviews.length > 0 ? 
+                (destReviews.reduce((sum, r) => sum + r.rating, 0) / destReviews.length).toFixed(1) : 'New';
+                
             return `
                 <div class="bg-orange-50 p-4 rounded-lg">
                     <h4 class="font-semibold text-gray-800 mb-3">🌍 Destination Booking</h4>
                     <div class="flex items-center mb-3">
-                        <span class="text-3xl mr-3">${destination.image}</span>
+                        <span class="text-3xl mr-3">${destination.image_url}</span>
                         <div>
                             <p class="font-medium text-gray-800 text-lg">${destination.name}</p>
-                            <p class="text-sm text-gray-600">₹${destination.price.toLocaleString()} per person</p>
-                            <p class="text-sm text-gray-500">⭐ ${destination.rating} rating</p>
+                            <p class="text-sm text-gray-600">📍 ${destination.location}</p>
+                            <p class="text-sm text-gray-600">₹${destination.price_per_person.toLocaleString()} per person</p>
+                            <p class="text-sm text-gray-500">⭐ ${avgRating} rating (${destReviews.length} reviews)</p>
                         </div>
                     </div>
                     <p class="text-sm text-gray-600">${destination.description}</p>
+                    <div class="mt-2">
+                        <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full capitalize">${destination.category}</span>
+                    </div>
                 </div>
             `;
         }
 
         function createHotelBookingDetails(hotel) {
+            const destination = destinations.find(d => d.dest_id === hotel.dest_id);
+            const hotelReviews = reviews.filter(r => r.hotel_id === hotel.hotel_id);
+            const avgRating = hotelReviews.length > 0 ? 
+                (hotelReviews.reduce((sum, r) => sum + r.rating, 0) / hotelReviews.length).toFixed(1) : hotel.rating;
+                
             return `
                 <div class="bg-green-50 p-4 rounded-lg">
                     <h4 class="font-semibold text-gray-800 mb-3">🏨 Hotel Booking</h4>
                     <div class="mb-3">
                         <p class="font-medium text-gray-800 text-lg">${hotel.name}</p>
-                        <p class="text-sm text-gray-600">📍 ${hotel.location} • ${'⭐'.repeat(hotel.stars)} ${hotel.stars} Star</p>
-                        <p class="text-sm text-gray-600">₹${hotel.price.toLocaleString()} per night • ⭐ ${hotel.rating} rating</p>
+                        <p class="text-sm text-gray-600">📍 ${hotel.address}</p>
+                        <p class="text-sm text-gray-600">🏖️ Near ${destination ? destination.name : 'Unknown'}</p>
+                        <p class="text-sm text-gray-600">₹${hotel.price_range.toLocaleString()} per night • ${'⭐'.repeat(hotel.stars)} ${hotel.stars} Star</p>
+                        <p class="text-sm text-gray-500">⭐ ${avgRating} rating (${hotelReviews.length} reviews)</p>
                     </div>
                     <div class="flex flex-wrap gap-1">
                         ${hotel.amenities.map(amenity => `
@@ -762,7 +1423,8 @@
                 return;
             }
             
-            const basePrice = currentBookingItem.price;
+            const basePrice = currentBookingType === 'destination' ? 
+                currentBookingItem.price_per_person : currentBookingItem.price_range;
             const baseAmount = basePrice * travelers;
             const gstRate = 0.18; // 18% GST
             const gst = baseAmount * gstRate;
@@ -776,6 +1438,11 @@
         function submitBooking(event) {
             event.preventDefault();
             
+            if (!currentUser) {
+                showNotification('❌ Please login to make a booking!', 'error');
+                return;
+            }
+            
             const customerName = document.getElementById('customerName').value;
             const customerEmail = document.getElementById('customerEmail').value;
             const customerPhone = document.getElementById('customerPhone').value;
@@ -783,32 +1450,45 @@
             const travelDate = document.getElementById('travelDate').value;
             const customerCity = document.getElementById('customerCity').value;
             
-            const baseAmount = currentBookingItem.price * travelers;
+            const basePrice = currentBookingType === 'destination' ? 
+                currentBookingItem.price_per_person : currentBookingItem.price_range;
+            const baseAmount = basePrice * travelers;
             const gst = baseAmount * 0.18;
             const total = baseAmount + gst;
             
             const booking = {
+                book_id: bookings.length + 1,
+                user_id: currentUser.user_id,
+                hotel_id: currentBookingType === 'hotel' ? currentBookingItem.hotel_id : null,
+                dest_id: currentBookingType === 'destination' ? currentBookingItem.dest_id : 
+                         (currentBookingType === 'hotel' ? currentBookingItem.dest_id : null),
+                checkin_date: travelDate,
+                checkout_date: null, // Could be calculated based on duration
+                travelers: travelers,
+                total_amount: Math.round(total),
+                booking_status: 'confirmed',
+                booking_date: new Date().toISOString(),
+                
+                // Additional fields for display
                 bookingId: 'TI' + Date.now(),
                 type: currentBookingType,
-                itemId: currentBookingItem.id,
+                itemId: currentBookingType === 'destination' ? currentBookingItem.dest_id : currentBookingItem.hotel_id,
                 itemName: currentBookingItem.name,
                 customerName,
                 customerEmail,
                 customerPhone,
                 customerCity,
-                travelers,
                 travelDate,
                 baseAmount,
                 gstAmount: Math.round(gst),
                 totalAmount: Math.round(total),
-                bookingDate: new Date().toISOString(),
                 status: 'confirmed'
             };
             
             bookings.push(booking);
             localStorage.setItem('travelIndia_bookings', JSON.stringify(bookings));
             
-            closeModal();
+            closeModal('bookingModal');
             updateBookingCount();
             
             showNotification(`🎉 Booking confirmed! Your ${currentBookingType} booking for ${currentBookingItem.name} has been created. Booking ID: ${booking.bookingId}`, 'success');
@@ -892,16 +1572,191 @@
             document.getElementById('totalBookings').textContent = bookings.length;
         }
 
-        function closeModal() {
-            document.getElementById('bookingModal').classList.remove('show');
-            document.getElementById('bookingForm').reset();
+        // ===== ADMIN PANEL FUNCTIONS =====
+        function loadAdminPanel() {
+            if (!isAdmin) {
+                showNotification('❌ Access denied! Admin privileges required.', 'error');
+                return;
+            }
+            showAdminSection('destinations');
+        }
+
+        function showAdminSection(section) {
+            const container = document.getElementById('adminContainer');
+            
+            if (section === 'destinations') {
+                container.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">🏖️ Manage Destinations</h4>
+                        <div class="mb-4">
+                            <button onclick="showAddDestinationForm()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                ➕ Add New Destination
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="p-3 text-left">ID</th>
+                                        <th class="p-3 text-left">Name</th>
+                                        <th class="p-3 text-left">Location</th>
+                                        <th class="p-3 text-left">Category</th>
+                                        <th class="p-3 text-left">Price</th>
+                                        <th class="p-3 text-left">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${destinations.map(dest => `
+                                        <tr class="border-b">
+                                            <td class="p-3">${dest.dest_id}</td>
+                                            <td class="p-3">${dest.name}</td>
+                                            <td class="p-3">${dest.location}</td>
+                                            <td class="p-3">${dest.category}</td>
+                                            <td class="p-3">₹${dest.price_per_person.toLocaleString()}</td>
+                                            <td class="p-3">
+                                                <button onclick="editDestination(${dest.dest_id})" class="text-blue-600 hover:text-blue-800 mr-2">✏️ Edit</button>
+                                                <button onclick="deleteDestination(${dest.dest_id})" class="text-red-600 hover:text-red-800">🗑️ Delete</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else if (section === 'hotels') {
+                container.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">🏨 Manage Hotels</h4>
+                        <div class="mb-4">
+                            <button onclick="showAddHotelForm()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                                ➕ Add New Hotel
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="p-3 text-left">ID</th>
+                                        <th class="p-3 text-left">Name</th>
+                                        <th class="p-3 text-left">Destination</th>
+                                        <th class="p-3 text-left">Price</th>
+                                        <th class="p-3 text-left">Rating</th>
+                                        <th class="p-3 text-left">Stars</th>
+                                        <th class="p-3 text-left">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${hotels.map(hotel => {
+                                        const destination = destinations.find(d => d.dest_id === hotel.dest_id);
+                                        return `
+                                            <tr class="border-b">
+                                                <td class="p-3">${hotel.hotel_id}</td>
+                                                <td class="p-3">${hotel.name}</td>
+                                                <td class="p-3">${destination ? destination.name : 'N/A'}</td>
+                                                <td class="p-3">₹${hotel.price_range.toLocaleString()}</td>
+                                                <td class="p-3">${hotel.rating}</td>
+                                                <td class="p-3">${'⭐'.repeat(hotel.stars)}</td>
+                                                <td class="p-3">
+                                                    <button onclick="editHotel(${hotel.hotel_id})" class="text-blue-600 hover:text-blue-800 mr-2">✏️ Edit</button>
+                                                    <button onclick="deleteHotel(${hotel.hotel_id})" class="text-red-600 hover:text-red-800">🗑️ Delete</button>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else if (section === 'users') {
+                container.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">👥 Manage Users</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="p-3 text-left">ID</th>
+                                        <th class="p-3 text-left">Name</th>
+                                        <th class="p-3 text-left">Email</th>
+                                        <th class="p-3 text-left">Phone</th>
+                                        <th class="p-3 text-left">City</th>
+                                        <th class="p-3 text-left">Admin</th>
+                                        <th class="p-3 text-left">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${users.map(user => `
+                                        <tr class="border-b">
+                                            <td class="p-3">${user.user_id}</td>
+                                            <td class="p-3">${user.name}</td>
+                                            <td class="p-3">${user.email}</td>
+                                            <td class="p-3">${user.phone || 'N/A'}</td>
+                                            <td class="p-3">${user.city || 'N/A'}</td>
+                                            <td class="p-3">${user.is_admin ? '✅ Yes' : '❌ No'}</td>
+                                            <td class="p-3">
+                                                <button onclick="toggleAdmin(${user.user_id})" class="text-blue-600 hover:text-blue-800 mr-2">
+                                                    ${user.is_admin ? '👤 Remove Admin' : '⚙️ Make Admin'}
+                                                </button>
+                                                ${user.user_id !== currentUser.user_id ? `
+                                                    <button onclick="deleteUser(${user.user_id})" class="text-red-600 hover:text-red-800">🗑️ Delete</button>
+                                                ` : ''}
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleAdmin(userId) {
+            const user = users.find(u => u.user_id === userId);
+            if (user) {
+                user.is_admin = !user.is_admin;
+                localStorage.setItem('travelindia_users', JSON.stringify(users));
+                showAdminSection('users');
+                showNotification(`✅ ${user.name} admin status updated!`, 'success');
+            }
+        }
+
+        function deleteUser(userId) {
+            const user = users.find(u => u.user_id === userId);
+            if (user && confirm(`Are you sure you want to delete user "${user.name}"?`)) {
+                users = users.filter(u => u.user_id !== userId);
+                localStorage.setItem('travelindia_users', JSON.stringify(users));
+                showAdminSection('users');
+                showNotification(`❌ User "${user.name}" deleted successfully!`, 'info');
+            }
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function closeModal(modalId = 'bookingModal') {
+            if (modalId) {
+                document.getElementById(modalId).classList.remove('show');
+            } else {
+                // Close all modals
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('show');
+                });
+            }
+            
+            // Reset forms
+            document.querySelectorAll('form').forEach(form => form.reset());
             resetPriceDisplay();
         }
 
         function resetPriceDisplay() {
-            document.getElementById('baseAmount').textContent = '₹0';
-            document.getElementById('gstAmount').textContent = '₹0';
-            document.getElementById('totalAmount').textContent = '₹0';
+            const baseAmount = document.getElementById('baseAmount');
+            const gstAmount = document.getElementById('gstAmount');
+            const totalAmount = document.getElementById('totalAmount');
+            
+            if (baseAmount) baseAmount.textContent = '₹0';
+            if (gstAmount) gstAmount.textContent = '₹0';
+            if (totalAmount) totalAmount.textContent = '₹0';
         }
 
         function showNotification(message, type) {
@@ -932,5 +1787,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a43859540befd5',t:'MTc1NDM3NTE1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a4eb4f37d547f3',t:'MTc1NDM4MjQ4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
